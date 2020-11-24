@@ -73,9 +73,9 @@ const ChangePassword = async (req,res)=>{
     console.log("Change Password");
 
     const { oldPassword, newPassword } = req.body;
-    const { userId  } = req.user;
+    const { Id  } = req.user;
 
-    const [noUser,user] = await to(Teacher.query().skipUndefined().where("userId",userId).throwIfNotFound().returning("*"));
+    const [noUser,user] = await to(Teacher.query().skipUndefined().where("TeacherId",Id).throwIfNotFound().returning("*"));
     if(noUser) return badRequestError("Invalid User");
 
     if(user){
@@ -84,7 +84,7 @@ const ChangePassword = async (req,res)=>{
             const newHashedPassword = await bcrypt.hashSync(newPassword, 10);
 
             // @ts-ignore
-            const [error,updatedPassword] = await to(Teacher.query().skipUndefined().where("userId",userId).update({
+            const [error,updatedPassword] = await to(Teacher.query().skipUndefined().where("TeacherId",Id).update({
                 password : newHashedPassword
             }).returning("*"));
             if(error) return badRequestError("Error in changing password");

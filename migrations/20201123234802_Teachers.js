@@ -1,7 +1,7 @@
 
 exports.up = function(knex) {
-    return knex.schema.createTable("Teachers",(table) => {
-        table.uuid("teachersId").defaultTo(knex.raw("uuid_generate_v4()")).primary();
+    return knex.schema.createTable("teacher",(table) => {
+        table.uuid("id").defaultTo(knex.raw("uuid_generate_v4()")).primary();
         table.string('username').unique();
         table.string('fullname');
         table.string('email').unique().notNullable();
@@ -14,5 +14,5 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-    return knex.schema.dropTableIfExists("Teachers");
+    return knex.schema.dropTableIfExists("teacher");
 };

@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 class Teacher extends Model{
     static get tableName(){
-        return "Teachers"
+        return "teacher"
     }
     async $beforeInsert(queryContext) {
         await super.$beforeInsert(queryContext);
