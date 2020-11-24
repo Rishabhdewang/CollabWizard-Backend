@@ -10,7 +10,7 @@ class Education extends Model{
         return {
             education : {
                 relation : Model.HasManyRelation,
-                modelclass : teacher,
+                modelClass : teacher,
                 join : {
                     from : "education.teacherId",
                     to : "teacher.id"

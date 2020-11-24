@@ -10,7 +10,7 @@ class Skill extends Model{
         return {
             skills : {
                 relation : Model.HasManyRelation,
-                modelclass : teacher,
+                modelClass : teacher,
                 join : {
                     from : "skills.teacherId",
                     to : "teacher.id"

@@ -9,7 +9,7 @@ class Experience extends Model{
         return {
             experience : {
                 relation : Model.HasManyRelation,
-                modelclass : teacher,
+                modelClass : teacher,
                 join : {
                     from : "experience.teacherId",
                     to : "teacher.id"
