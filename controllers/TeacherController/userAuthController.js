@@ -1,5 +1,5 @@
 const { badRequestError, to, okResponse, createdResponse, notFoundError } = require("../../global_functions");
-const Teacher = require("../../models/TeacherModel");
+const Teacher = require("../../Models/Teacher/teacherModel");
 const bcrypt = require("bcrypt");
 const { generateAccessToken } = require("../../middlewares/authenticate");
 const jwt = require("jsonwebtoken");
@@ -57,7 +57,7 @@ const TeacherDetail = async(req,res)=>{
         const [noUser,fetchedUser] = await to(Teacher.query().skipUndefined().where("email",user.email).throwIfNotFound().returning("*"));
         if(noUser) return badRequestError(res,"Invalid Token");
         console.log(fetchedUser);
-        delete fetchedUser[0].password;
+        delete fetchedUser[0].password; //to remove password field from details
         
         res.status(200).json({
             success: true,

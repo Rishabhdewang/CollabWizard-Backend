@@ -1,4 +1,7 @@
-const {Model} =require('objection');
+const { Model, ValidationError } = require('objection');
+const validator = require('validator');
+const { to, notFoundError } = require("../../global_functions");
+const bcrypt = require("bcrypt");
 
 class Teacher extends Model{
     static get tableName(){
@@ -21,12 +24,12 @@ class Teacher extends Model{
             })
         }
     
-        if(this.username === '' || !this.username){
-            throw new ValidationError({
-                message: "Please enter a username",
-                type: "ModelValidation"
-            })
-        }
+        // if(this.username === '' || !this.username){
+        //     throw new ValidationError({
+        //         message: "Please enter a username",
+        //         type: "ModelValidation"
+        //     })
+        // }
 
         let [emailNotFound,emailExist] = await to(this.constructor.query().skipUndefined().where('email', this.email).first());
         console.log(emailExist);

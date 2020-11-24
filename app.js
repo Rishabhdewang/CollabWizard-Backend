@@ -32,12 +32,17 @@ const app = express()
   }))
 app.use(express.static(path.join(__dirname, 'public')))
 
-// // Import API Routes.
+// Import API Routes.
+const route = require("./routes/Teacher/teacherroute");
+app.use('/api',route)
+
 // const adminRoutes = require("./src/routes/index").AdminRoutes;
 // // const userRoutes = require("./src/routes/index").UserRoutes;
 // // Add routes as middleware.
 // app.use("/v1/api/admin/",adminRoutes);
 // app.use("/v1/api/",userRoutes);
+
+
 
 
 app.use((err, req, res, next) => {
