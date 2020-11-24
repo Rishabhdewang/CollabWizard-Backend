@@ -13,8 +13,7 @@ router.post("/forgotPassword",auth.ForgotPassword)
 router.post("/verifyForgotPassword",auth.VerifyForgotPassword)
 
 router.get("/all",profile.allTeachers)
-router.put("/updateprofile?id=",profile.updateTeacherProfile)
-// router.post("/updateprofile",profile.updateTeacherProfile)
+// router.put("/updateprofile?id=",profile.updateTeacherProfile)
 
 router.get("/education",profile.teacherEducation) 
 router.post("/addEducation",profile.addTeacherEducation)

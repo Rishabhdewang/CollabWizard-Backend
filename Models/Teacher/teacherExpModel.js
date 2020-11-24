@@ -12,7 +12,7 @@ class Experience extends Model{
                 modelclass : teacher,
                 join : {
                     from : "experience.teacherId",
-                    to : "teacher.teacherId"
+                    to : "teacher.id"
                 } 
             }
         }

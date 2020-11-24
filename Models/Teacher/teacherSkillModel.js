@@ -13,7 +13,7 @@ class Skill extends Model{
                 modelclass : teacher,
                 join : {
                     from : "skills.teacherId",
-                    to : "teacher.teacherId"
+                    to : "teacher.id"
                 } 
             }
         }
