@@ -2,6 +2,7 @@ const router = require("express").Router();
 const auth = require("../../controllers/TeacherController/userAuthController");
 const profile = require("../../controllers/TeacherController/teacherProfileController");
 const { authenticateToken } = require('../../middlewares/authenticate');
+const fileUploader = require("../../middlewares/fileUploader");
 
 
 // Teacher
@@ -42,9 +43,8 @@ router.get("/interest/:id",authenticateToken, profile.GetTeacherInterest)
 router.put("/interest/:id",authenticateToken ,profile.UpdateTeacherInterest)
 router.delete("/interest/:id",authenticateToken ,profile.DeleteTeacherInterest)
 
-// router.get("/interest/:id",profile.TeacherInterests)
-// router.post("/addInterest",profile.addTeacherInterest)
-// router.post("/updateInterest/:id",profile.updateTeacherInterest)
+router.post("/upload/file",fileUploader.UploadSingleFile);
+router.post("/upload/files",fileUploader.UploadMultipleFiles);
 
 //Homepage Routing
 
