@@ -36,14 +36,14 @@ app.use(express.static(path.join(__dirname, 'public')))
 const route = require("./routes/Teacher/teacherroute");
 app.use('/api',route)
 
-// const adminRoutes = require("./src/routes/index").AdminRoutes;
-// // const userRoutes = require("./src/routes/index").UserRoutes;
-// // Add routes as middleware.
-// app.use("/v1/api/admin/",adminRoutes);
-// app.use("/v1/api/",userRoutes);
 
-
-
+app.use('/', (req, res) => {
+  res.json({
+    status: true,
+    message: 'Welcome to CollabWizard API!',
+    code: 200
+  });
+});
 
 app.use((err, req, res, next) => {
   if (err) {
