@@ -8,9 +8,15 @@ const TeacherRegister = async (req,res)=>{
 
     const data = req.body;
 
-    const [error,TeacherCreated] = await to(Teacher.query().skipUndefined().insertGraph(data).returning("*"));
+    const username = data.email.split("@")[0] + Math.floor(Math.random()*9999);
+    const teacher = Object.assign({},{
+        ...data,
+        username : username
+    });
+
+    const [error,TeacherCreated] = await to(Teacher.query().skipUndefined().insert(teacher).returning("*"));
     // return Error Response while creating user;
-    console.log(error);
+
     if(error) return badRequestError(res,error.message);
 
     delete TeacherCreated.password;
@@ -34,7 +40,7 @@ const TeacherLogin = async (req,res) =>{
     if(!validPassword) return badRequestError(res,"Invalid Password");
 
     if(validPassword){
-        const token = generateAccessToken({email:TeacherExist.email,id:TeacherExist.TeacherId,role:"Teacher"},'2d');
+        const token = generateAccessToken({email:TeacherExist.email,id:TeacherExist.id,role:"Teacher"},'2d');
 
         return okResponse(res,token,"Teacher login successfully");
     }

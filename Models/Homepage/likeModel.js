@@ -11,7 +11,9 @@ class Like extends Model {
   }
 
   static get relationMappings(){
-      
+      return {
+        
+      }
   }
 
 }

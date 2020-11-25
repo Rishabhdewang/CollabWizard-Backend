@@ -1,266 +1,338 @@
-const teacher = require('../../Models/Teacher/teacherModel')
-const education = require('../../Models/Teacher/teacherEducationModel')
-const experience = require('../../Models/Teacher/teacherExpModel');
-const interest = require('../../Models/Teacher/profile/interestmodel');
-const skill = require('../../Models/Teacher/teacherSkillModel');
-
 const {
     to,
-    badRequestError
+    badRequestError,
+    okResponse
 } = require('../../global_functions');
-const Education = require('../../Models/Teacher/teacherEducationModel');
-const Experience = require('../../Models/Teacher/teacherExpModel');
-const Skill = require('../../Models/Teacher/teacherSkillModel');
+const Education = require('../../Models/Teacher/profile/teacherEducationModel');
+const Experience = require('../../Models/Teacher/profile/teacherExpModel');
+const Skill = require('../../Models/Teacher/profile/teacherSkillModel');
 const Interest = require('../../Models/Teacher/profile/interestmodel');
+const Teacher = require('../../Models/Teacher/teacherModel');
 
-const allTeachers = async(req,res)=>{
+// const allTeachers = async(req,res)=>{
 
-    const [noteacher,teachers] = await to(teacher.query().returning("*"));
-    //if(noUser) return badRequestError(res,"No user found");
-    if(noteacher) return badRequestError(res,noteacher.message);
-    console.log(teachers);
+//     const [noteacher,teachers] = await to(teacher.query().returning("*"));
+//     //if(noUser) return badRequestError(res,"No user found");
+//     if(noteacher) return badRequestError(res,noteacher.message);
+//     console.log(teachers);
     
-    res.status(200).json({
-        success: true,
-        data : teachers,
-        code : 200,
-        message : "All Teachers"
-        })
+//     res.status(200).json({
+//         success: true,
+//         data : teachers,
+//         code : 200,
+//         message : "All Teachers"
+//         })
     
+// }
+
+const GetTeacherProfile = async (req, res) => {
+
+    const [noprofile, profile] = await to(Teacher.query().skipUndefined().where("id",req.user.id).withGraphFetched('[education,experience,skill,interest]').first().returning("*"));
+    if (noprofile) return badRequestError(res,noprofile);
+
+    return okResponse(res,profile,"Profile");
 }
 
-const updateTeacherProfile = async (req, res) => {
+const UpdateTeacherProfile = async (req, res) => {
 
-    console.log(req.params);
-    const [notupdated, updated] = await to(teacher.query().where("id",req.body.id).update(req.body).first());
-    if (notupdated) return res.status(400).send(notupdated), console.log(notupdated);
-    console.log(updated);
+    const [notupdated, updated] = await to(Teacher.query().skipUndefined().where("id",req.user.id).patch(req.body).first().returning("*"));
+    if (notupdated) return badRequestError(res,"Error in updating profile");
 
-    res.status(200).json({
-        success: true,
-        data : updated,
-        code : 200,
-        message : "Profile Updated"
-        })
-    
+    return okResponse(res,updated,"Profile Updated");
 }
 
 //Education
-const addTeacherEducation = async(req,res) =>{
+const AddTeacherEducation = async(req,res) =>{
 
-    const eduDetails = req.body;
-
-    const [notadded,added] = await to(education.query().insert(eduDetails).where("teacherId",eduDetails.teacherId).first())
-    if(notadded) return badRequestError(res,notadded.message)
-    console.log(added);
-
-    res.status(200).json({
-        success: true,
-        data : added,
-        code : 200,
-        message : "Teacher Education Details"
+    const data = req.body;
+   
+    const education = Object.assign({},{
+        ...data,
+        teacherId : req.user.id
     })
+
+    const [notadded,added] = await to(Education.query().skipUndefined().insert(education).first().returning("*"));
+    if(notadded) return badRequestError(res,"Error in adding education");
+
+    return okResponse(res,added,"Teacher Education Details");
 
 }
 
-const teacherEducation = async(req,res) => {
+const GetTeacherEducation = async(req,res) => {
     console.log("Teacher Education Detail");
+    const { teacherId } = req.user;
+    const { id } = req.params;
+    console.log(id)
+    const [notfound,educationDetails] = await to(Education.query().skipUndefined().where("id",req.params.id).andWhere("teacherId",teacherId).first().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No education found");
 
-    const [notfound,educationDetails] = await to(education.query().skipUndefined().where("teacherId",req.params.id).throwIfNotFound().returning("*"));
-    //if(noUser) return badRequestError(res,"No user found");
-    if(notfound) return badRequestError(res,notfound.message);
-    console.log(educationDetails);
+    return okResponse(res,educationDetails,"Teacher Education Detail");
     
-    res.status(200).json({
-        success: true,
-        data : educationDetails,
-        code : 200,
-        message : "Teacher Education Details"
-        })
     
 }
 
-const updateTeacherEducation = async (req, res) => {
+const GetTeacherEducations = async (req,res) => {
+    console.log("Teacher Educations");
 
-    const [notupdated, updated] = await to(Education.query().where("id",req.body.id).first().update(req.body));
-    if (notupdated) return res.status(400).send(notupdated), console.log(notupdated);
+    const [notfound,educations] = await to(Education.query().skipUndefined().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No Teacher Education found");
+
+    return okResponse(res,educations,"Teacher Educations");
+}
+
+const UpdateTeacherEducation = async (req, res) => {
+
+    const data = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
+
+    const [notupdated, updated] = await to(Education.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).patch(data).first().returning("*"));
+    if (notupdated) return badRequestError(res,"Error in updating education");
     console.log(updated);
 
-    res.status(200).json({
-        success: true,
-        data : updated,
-        code : 200,
-        message : "Education Updated"
-        })
+    return okResponse(res,updated,"Education Updated");
     
 }
 
 
-//Experience
-const addTeacherExperience = async(req,res) =>{
+const DeleteTeacherEducation = async (req, res) => {
 
-    const expDetails = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
 
-    const [expNotAdded,expAdded] = await to(experience.query().insert(eduDetails).where("teacherId",expDetails.teacherId).first())
-    if(expNotAdded) return badRequestError(res,expNotAdded.message)
-    console.log(expAdded);
+    const [notdeleted, deleted] = await to(Education.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).delete().first().returning("*"));
+    if (notdeleted) return badRequestError(res,"Error in deleting education");
+    console.log(deleted);
 
-    res.status(200).json({
-        success: true,
-        data : expAdded,
-        code : 200,
-        message : "Teacher Experience Details"
+    return okResponse(res,deleted,"Education Deleted");
+    
+}
+
+
+// //Experience
+const AddTeacherExperience = async(req,res) =>{
+
+    const data = req.body;
+   
+    const experience = Object.assign({},{
+        ...data,
+        teacherId : req.user.id
     })
+    console.log(experience);
+
+    const [notadded,added] = await to(Experience.query().skipUndefined().insert(experience).first().returning("*"));
+    if(notadded) return badRequestError(res,"Error in adding Experience");
+
+    return okResponse(res,added,"Teacher Experience Details");
 
 }
 
-const TeacherExperience = async(req,res) => {
+const GetTeacherExperience = async(req,res) => {
     console.log("Teacher Experience Detail");
+    const { teacherId } = req.user;
+    const { id } = req.params;
+    console.log(id)
+    const [notfound,experienceDetails] = await to(Experience.query().skipUndefined().where("id",req.params.id).andWhere("teacherId",teacherId).first().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No experience found");
 
-    const [expnotfound,expDetails] = await to(experience.query().skipUndefined().where("id",req.body.id).throwIfNotFound().returning("*"));
-    //if(noUser) return badRequestError(res,"No user found");
-    if(expnotfound) return badRequestError(res,expnotfound.message);
-    console.log(expDetails);
+    return okResponse(res,experienceDetails,"Teacher Experience Detail");
     
-    res.status(200).json({
-        success: true,
-        data : expDetails,
-        code : 200,
-        message : "Teacher Experience Details"
-    })
     
 }
 
-const updateTeacherExperience = async (req, res) => {
+const GetTeacherExperiences = async (req,res) => {
+    console.log("Teacher Experiences");
 
-    const [notupdated, updated] = await to(experience.query().where("id",req.body.id).first().update(req.body));
-    if (notupdated) return res.status(400).send(notupdated), console.log(notupdated);
+    const [notfound,experiences] = await to(Experience.query().skipUndefined().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No Teacher experience found");
+
+    return okResponse(res,experiences,"Teacher Experiences");
+}
+
+const UpdateTeacherExperience = async (req, res) => {
+
+    const data = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
+
+    const [notupdated, updated] = await to(Experience.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).patch(data).first().returning("*"));
+    if (notupdated) return badRequestError(res,"Error in updating experience");
     console.log(updated);
 
-    res.status(200).json({
-        success: true,
-        data : updated,
-        code : 200,
-        message : "Experience Updated"
-        })
+    return okResponse(res,updated,"Experience Updated");
     
 }
 
 
-//Skills
-const addTeacherSkills = async(req,res) =>{
+const DeleteTeacherExperience = async (req, res) => {
 
-    const skills = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
 
-    const [skillNotAdded,skillAdded] = await to(skill.query().insert(skills).where("teacherId",skills.teacherId).first())
-    if(skillNotAdded) return badRequestError(res,skillNotAdded.message)
-    console.log(skillAdded);
+    const [notdeleted, deleted] = await to(Experience.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).delete().first().returning("*"));
+    if (notdeleted) return badRequestError(res,"Error in deleting experience");
+    console.log(deleted);
 
-    res.status(200).json({
-        success: true,
-        data : skillAdded,
-        code : 200,
-        message : "Teacher Experience Details"
+    return okResponse(res,deleted,"Experience Deleted");
+    
+}
+// Skill
+const AddTeacherSkill = async(req,res) =>{
+
+    const data = req.body;
+   
+    const skill = Object.assign({},{
+        ...data,
+        teacherId : req.user.id
     })
+    console.log(skill);
+
+    const [notadded,added] = await to(Skill.query().skipUndefined().insert(skill).first().returning("*"));
+    if(notadded) return badRequestError(res,"Error in adding skill");
+
+    return okResponse(res,added,"Teacher Skill Details");
 
 }
 
-const TeacherSkills = async(req,res) => {
+const GetTeacherSkill = async(req,res) => {
+    console.log("Teacher Skill Detail");
+    const { teacherId } = req.user;
+    const { id } = req.params;
+
+    const [notfound,skillDetails] = await to(Skill.query().skipUndefined().where("id",req.params.id).andWhere("teacherId",teacherId).first().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No skill found");
+
+    return okResponse(res,skillDetails,"Teacher Skill Detail");
+    
+    
+}
+
+const GetTeacherSkills = async (req,res) => {
     console.log("Teacher Skills");
 
-    const [skillNotfound,skillDetails] = await to(skill.query().skipUndefined().where("id",req.body.id).throwIfNotFound().returning("*"));
-    //if(noUser) return badRequestError(res,"No user found");
-    if(skillNotfound) return badRequestError(res,skillNotfound.message);
-    console.log(skillDetails);
-    
-    res.status(200).json({
-        success: true,
-        data : skillDetails,
-        code : 200,
-        message : "Teacher Skills"
-    })
-    
+    const [notfound,skills] = await to(Skill.query().skipUndefined().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No Teacher skill found");
+
+    return okResponse(res,skills,"Teacher Skills");
 }
 
-const updateTeacherSkills = async (req, res) => {
+const UpdateTeacherSkill = async (req, res) => {
 
-    const [notupdated, updated] = await to(Skill.query().where("id",req.body.id).update(req.body));
-    if (notupdated) return res.status(400).send(notupdated), console.log(notupdated);
+    const data = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
+
+    const [notupdated, updated] = await to(Skill.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).patch(data).first().returning("*"));
+    if (notupdated) return badRequestError(res,"Error in updating skill");
     console.log(updated);
 
-    res.status(200).json({
-        success: true,
-        data : updated,
-        code : 200,
-        message : "Skills Updated"
-        })
+    return okResponse(res,updated,"Skill Updated");
     
 }
 
 
-//Interests
-const addTeacherInterest = async(req,res) =>{
+const DeleteTeacherSkill = async (req, res) => {
 
-    const interests = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
 
-    const [intNotAdded,intAdded] = await to(interest.query().insert(interest).where("teacherId",interests.teacherId).first())
-    if(intNotAdded) return badRequestError(res,intNotAdded.message)
-    console.log(intAdded);
+    const [notdeleted, deleted] = await to(Skill.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).delete().first().returning("*"));
+    if (notdeleted) return badRequestError(res,"Error in deleting skill");
+    console.log(deleted);
 
-    res.status(200).json({
-        success: true,
-        data : intAdded,
-        code : 200,
-        message : "Teacher Interests"
-    })
+    return okResponse(res,deleted,"Skill Deleted");
+    
+}
+
+// //Interests
+const AddTeacherInterest = async(req,res) =>{
+
+    const data = req.body;
+
+    const interestData = Object.assign({},{
+       ...data,
+       teacherId : req.user.id
+    });
+
+    const [notadded,added] = await to(Interest.query().skipUndefined().insert(interestData).first().returning("*"));
+    if(notadded) return badRequestError(res,"Error in adding interest");
+
+    return okResponse(res,added,"Teacher Interest Details");
 
 }
 
-const TeacherInterests = async(req,res) => {
+const GetTeacherInterest = async(req,res) => {
+    console.log("Teacher Interest Detail");
+    const { teacherId } = req.user;
+    const { id } = req.params;
+
+    const [notfound,interestDetails] = await to(Interest.query().skipUndefined().where("id",req.params.id).andWhere("teacherId",teacherId).first().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No interest found");
+
+    return okResponse(res,interestDetails,"Teacher Interest Detail");
+    
+    
+}
+
+const GetTeacherInterests = async (req,res) => {
     console.log("Teacher Interests");
 
-    const [intNotfound,interests] = await to(interest.query().skipUndefined().where("id",req.body.id).throwIfNotFound().returning("*"));
-    //if(noUser) return badRequestError(res,"No user found");
-    if(intNotfound) return badRequestError(res,intNotfound.message);
-    console.log(interests);
-    
-    res.status(200).json({
-        success: true,
-        data : interests,
-        code : 200,
-        message : "Teacher Interests"
-    })
+    const [notfound,interests] = await to(Interest.query().skipUndefined().throwIfNotFound().returning("*"));
+    if(notfound) return badRequestError(res,"No Teacher interest found");
+
+    return okResponse(res,interests,"Teacher Interests");
+}
+
+const UpdateTeacherInterest = async (req, res) => {
+
+    const data = req.body;
+    const { id } = req.params;
+    const { teacherId } = req.user;
+
+    const [notupdated, updated] = await to(Interest.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).patch(data).first().returning("*"));
+    if (notupdated) return badRequestError(res,"Error in updating interest");
+    console.log(updated);
+
+    return okResponse(res,updated,"Interest Updated");
     
 }
 
-const updateTeacherInterest = async (req, res) => {
 
-    const [notupdated, updated] = await to(Interest.query().where("id",req.body.id).update(req.body));
-    if (notupdated) return res.status(400).send(notupdated), console.log(notupdated);
-    console.log(updated);
+const DeleteTeacherInterest = async (req, res) => {
 
-    res.status(200).json({
-        success: true,
-        data : updated,
-        code : 200,
-        message : "Interest Updated"
-        })
+    const { id } = req.params;
+    const { teacherId } = req.user;
+
+    const [notdeleted, deleted] = await to(Interest.query().skipUndefined().where("id",id).andWhere("teacherId",teacherId).delete().first().returning("*"));
+    if (notdeleted) return badRequestError(res,"Error in deleting interest");
+    console.log(deleted);
+
+    return okResponse(res,deleted,"Interest Deleted");
     
 }
 
 module.exports = {
-    allTeachers,
-    updateTeacherProfile,
-    addTeacherEducation,
-    teacherEducation,
-    updateTeacherEducation,
-    addTeacherExperience,
-    TeacherExperience,
-    updateTeacherExperience,
-    addTeacherSkills,
-    TeacherSkills,
-    updateTeacherSkills,
-    addTeacherInterest,
-    TeacherInterests,
-    updateTeacherInterest
+    // allTeachers,
+    GetTeacherProfile,
+    UpdateTeacherProfile,
+    AddTeacherEducation,
+    GetTeacherEducation,
+    GetTeacherEducations,
+    UpdateTeacherEducation,
+    DeleteTeacherEducation,
+    AddTeacherExperience,
+    GetTeacherExperience,
+    GetTeacherExperiences,
+    UpdateTeacherExperience,
+    DeleteTeacherExperience,
+    AddTeacherSkill,
+    GetTeacherSkill,
+    GetTeacherSkills,
+    UpdateTeacherSkill,
+    DeleteTeacherSkill,
+    AddTeacherInterest,
+    GetTeacherInterest,
+    GetTeacherInterests,
+    UpdateTeacherInterest,
+    DeleteTeacherInterest
 }

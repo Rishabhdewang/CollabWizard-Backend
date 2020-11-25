@@ -5,7 +5,7 @@ class Experience extends Model{
         return "experience"
     }
     static get relationMappings(){
-        const teacher = require("./teacherModel");
+        const teacher = require("../teacherModel");
         return {
             experience : {
                 relation : Model.HasManyRelation,

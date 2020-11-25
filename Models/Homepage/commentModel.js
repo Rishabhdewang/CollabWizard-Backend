@@ -21,24 +21,17 @@ class Comment extends Model {
                 from:"comment.id",
                 to:"reply.commentId"
             }
-
-
         },
-        
-            teacher:{
-              relation:Model.BelongsToOneRelation,
-              modelClass:Teacher,
-              join:{
-                  from:"comment.userId",
-                  to:"teacher.id"
-              }
-  
-  
+        teacher:{
+          relation:Model.BelongsToOneRelation,
+          modelClass:Teacher,
+          join:{
+              from:"comment.userId",
+              to:"teacher.id"
           }
+      }
     }
-}
-
-
+  }
 }
 
 module.exports = Comment;

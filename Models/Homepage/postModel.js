@@ -9,6 +9,7 @@ class Post extends Model {
   static get tableName() {
     return 'post';
   }
+  
   static get relationMappings(){
     const Teacher=require('../Teacher/teacherModel');
     const Like=require("./likeModel");
@@ -23,12 +24,8 @@ class Post extends Model {
                 from:"post.userId",
                 to:"teacher.id"
             }
-
-
         },
         like:{
-
-
             relation:Model.HasManyRelation,
             modelClass:Like,
             join:{
@@ -44,14 +41,9 @@ class Post extends Model {
                 from:"post.id",
                 to:"comment.postId"
             }
-
         }
-
     }
-    
-
   }
-
 }
 
 module.exports = Post;

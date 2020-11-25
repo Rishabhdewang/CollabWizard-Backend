@@ -19,13 +19,9 @@ class Reply extends Model {
             from:"reply.userId",
             to:"teacher.id"
         }
-
-
-    }
-
+      }
     }
   }
-
 }
 
 module.exports = Reply;

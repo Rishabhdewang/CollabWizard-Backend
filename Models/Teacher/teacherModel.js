@@ -8,13 +8,13 @@ const {
   notFoundError
 } = require("../../global_functions");
 const bcrypt = require("bcrypt");
-const Experience = require('./teacherExpModel');
-const Skill = require('./teacherSkillModel');
 
 class Teacher extends Model {
+
   static get tableName() {
     return "teacher"
   }
+
   async $beforeInsert(queryContext) {
     await super.$beforeInsert(queryContext);
 
@@ -53,9 +53,9 @@ class Teacher extends Model {
 
 
   static get relationMappings() {
-    const Education = require("./teacherEducationModel");
-    const Exp = require("./teacherExpModel");
-    const Skills = require("./teacherSkillModel");
+    const Education = require("./profile/teacherEducationModel");
+    const Experience = require("./profile/teacherExpModel");
+    const Skills = require("./profile/teacherSkillModel");
     const Interest = require("./profile/interestmodel");
     return {
       education: {
@@ -76,7 +76,7 @@ class Teacher extends Model {
       },
       skill: {
         relation: Model.HasManyRelation,
-        modelClass: Skill,
+        modelClass: Skills,
         join: {
           from: "teacher.id",
           to: "skills.teacherId"
@@ -87,11 +87,9 @@ class Teacher extends Model {
         modelClass: Interest,
         join: {
           from: "teacher.id",
-          to: "interest.teacherId"
+          to: "interests.teacherId"
         }
       }
-
-
     }
   }
 }

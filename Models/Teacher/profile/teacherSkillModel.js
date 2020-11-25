@@ -6,7 +6,7 @@ class Skill extends Model{
     }
 
     static get relationMappings(){
-        const teacher = require("./teacherModel");
+        const teacher = require("../teacherModel");
         return {
             skills : {
                 relation : Model.HasManyRelation,
