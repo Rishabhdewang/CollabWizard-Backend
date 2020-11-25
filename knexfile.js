@@ -17,7 +17,7 @@ module.exports = {
     client: 'pg',
     connection: process.env.DATABASE_URL,       // Change these with your own database connection URL.
     migrations: {
-      directory: './src/migrations'
+      directory: 'migrations'
     },
     useNullAsDefault: true
   }
