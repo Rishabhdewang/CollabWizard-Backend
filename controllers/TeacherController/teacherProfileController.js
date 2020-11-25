@@ -1,7 +1,7 @@
 const teacher = require('../../Models/Teacher/teacherModel')
 const education = require('../../Models/Teacher/teacherEducationModel')
 const experience = require('../../Models/Teacher/teacherExpModel');
-const interest = require('../../Models/Teacher/interestmodel');
+const interest = require('../../Models/Teacher/profile/interestmodel');
 const skill = require('../../Models/Teacher/teacherSkillModel');
 
 const {
@@ -11,7 +11,7 @@ const {
 const Education = require('../../Models/Teacher/teacherEducationModel');
 const Experience = require('../../Models/Teacher/teacherExpModel');
 const Skill = require('../../Models/Teacher/teacherSkillModel');
-const Interest = require('../../Models/Teacher/interestmodel');
+const Interest = require('../../Models/Teacher/profile/interestmodel');
 
 const allTeachers = async(req,res)=>{
 

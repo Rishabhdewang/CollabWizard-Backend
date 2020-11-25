@@ -6,7 +6,7 @@ class Interest extends Model{
     }
 
     static get relationMappings(){
-        const teacher = require("./teacherModel");
+        const teacher = require("../teacherModel");
         return {
             interest : {
                 relation : Model.HasManyRelation,
