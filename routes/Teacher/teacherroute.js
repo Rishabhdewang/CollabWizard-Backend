@@ -13,18 +13,24 @@ router.post("/forgotPassword",auth.ForgotPassword)
 router.post("/verifyForgotPassword",auth.VerifyForgotPassword)
 
 router.get("/all",profile.allTeachers)
-// router.put("/updateprofile?id=",profile.updateTeacherProfile)
+router.put("/updateprofile/:id",profile.updateTeacherProfile)
 
-router.get("/education",profile.teacherEducation) 
+router.get("/education/:id",profile.teacherEducation) 
 router.post("/addEducation",profile.addTeacherEducation)
+router.post("/updateEducation/:id",profile.updateTeacherEducation)
 
-router.get("/experience",profile.TeacherExperience)
+router.get("/experience/:id",profile.TeacherExperience)
 router.post("/addExperience",profile.addTeacherExperience)
+router.post("/updateExperience/:id",profile.updateTeacherExperience)
 
-router.get("/skills",profile.TeacherSkills)
+router.get("/skills/:id",profile.TeacherSkills)
 router.post("/addSkills",profile.addTeacherSkills)
+router.post("/updateSkills/:id",profile.updateTeacherSkills)
 
-router.get("/interest",profile.TeacherInterests)
+router.get("/interest/:id",profile.TeacherInterests)
 router.post("/addInterest",profile.addTeacherInterest)
+router.post("/updateInterest/:id",profile.updateTeacherInterest)
+
+
 
 module.exports = router ;

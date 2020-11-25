@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 
-function generateAccessToken(payload,expiresTime='1800s') {
+function generateAccessToken(payload,expiresTime='18000s') {
     console.log(expiresTime);
     if(expiresTime){
-        // expires after half and hour (1800 seconds = 30 minutes)
+        // expires after half and hour (18000 seconds = 300 minutes = 5hours)
         return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expiresTime});
     }else {
         console.log('without expires time');

@@ -34,7 +34,7 @@ const TeacherLogin = async (req,res) =>{
     if(!validPassword) return badRequestError(res,"Invalid Password");
 
     if(validPassword){
-        const token = generateAccessToken({email:TeacherExist.email,id:TeacherExist.TeacherId,role:"Teacher"},'1d');
+        const token = generateAccessToken({email:TeacherExist.email,id:TeacherExist.TeacherId,role:"Teacher"},'2d');
 
         return okResponse(res,token,"Teacher login successfully");
     }
@@ -75,7 +75,7 @@ const ChangePassword = async (req,res)=>{
     const { oldPassword, newPassword } = req.body;
     const { Id  } = req.user;
 
-    const [noUser,user] = await to(Teacher.query().skipUndefined().where("TeacherId",Id).throwIfNotFound().returning("*"));
+    const [noUser,user] = await to(Teacher.query().skipUndefined().where("id",Id).throwIfNotFound().returning("*"));
     if(noUser) return badRequestError("Invalid User");
 
     if(user){
