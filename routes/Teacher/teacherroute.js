@@ -31,6 +31,18 @@ router.get("/interest/:id",profile.TeacherInterests)
 router.post("/addInterest",profile.addTeacherInterest)
 router.post("/updateInterest/:id",profile.updateTeacherInterest)
 
+//Homepage Routing
+
+router.post("/addpost",authenticate,HomepagePostController.AddPost);
+router.post("/addcomment",authenticate,HomepagePostController.AddComment);
+router.post("/addreply",authenticate,HomepagePostController.AddReply);
+router.post("/upvote",authenticate,HomepagePostController.UpVote);
+router.delete("/deletecomment",authenticate,HomepagePostController.DeleteComment);
+router.delete("/deletereply",authenticate,HomepagePostController.DeleteReply);
+router.delete("/deletepost",authenticate,HomepagePostController.DeletePost);
+
+router.get("/getpost",authenticate,HomepagePostController.GetPost);
+
 
 
 module.exports = router ;
