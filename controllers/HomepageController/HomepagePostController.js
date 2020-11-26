@@ -29,7 +29,7 @@ const AddPost = async (req, res) => {
 const GetPosts = async (req, res) => {
 
     const [unsaved, saved] = await to(
-        Post.query()
+        Post.query().orderBy('created_at', 'desc')
         .returning("*")
         .withGraphFetched("teacher")
     );
