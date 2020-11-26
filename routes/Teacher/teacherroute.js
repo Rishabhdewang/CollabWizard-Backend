@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const auth = require("../../controllers/TeacherController/userAuthController");
 const profile = require("../../controllers/TeacherController/teacherProfileController");
+const HomepagePostController = require("../../controllers/HomepageController/HomepagePostController");
 const { authenticateToken } = require('../../middlewares/authenticate');
 const fileUploader = require("../../middlewares/fileUploader");
 
@@ -13,7 +14,7 @@ router.post("/changePassword",auth.ChangePassword)
 router.post("/forgotPassword",auth.ForgotPassword)
 router.post("/verifyForgotPassword",auth.VerifyForgotPassword)
 
-// router.get("/all",profile.allTeachers)
+router.get("/teachers",profile.Teachers)
 router.get("/profile",authenticateToken, profile.GetTeacherProfile)
 // router.put("/updateprofile/:id",profile.updateTeacherProfile)
 
@@ -23,13 +24,11 @@ router.get("/education/:id",authenticateToken, profile.GetTeacherEducation)
 router.put("/education/:id",authenticateToken ,profile.UpdateTeacherEducation)
 router.delete("/education/:id",authenticateToken ,profile.DeleteTeacherEducation)
 
-
 router.post("/experience", authenticateToken, profile.AddTeacherExperience)
 router.get("/experience",authenticateToken, profile.GetTeacherExperiences) 
 router.get("/experience/:id",authenticateToken, profile.GetTeacherExperience) 
 router.put("/experience/:id",authenticateToken ,profile.UpdateTeacherExperience)
 router.delete("/experience/:id",authenticateToken ,profile.DeleteTeacherExperience)
-
 
 router.post("/skill", authenticateToken, profile.AddTeacherSkill)
 router.get("/skill",authenticateToken, profile.GetTeacherSkills) 
@@ -48,8 +47,8 @@ router.post("/upload/files",fileUploader.UploadMultipleFiles);
 
 //Homepage Routing
 
-// router.post("/addpost",authenticate,HomepagePostController.AddPost);
-// router.post("/addcomment",authenticate,HomepagePostController.AddComment);
+router.post("/post",authenticateToken,HomepagePostController.AddPost);
+router.get("/post",authenticateToken,HomepagePostController.GetPosts);
 // router.post("/addreply",authenticate,HomepagePostController.AddReply);
 // router.post("/upvote",authenticate,HomepagePostController.UpVote);
 // router.delete("/deletecomment",authenticate,HomepagePostController.DeleteComment);

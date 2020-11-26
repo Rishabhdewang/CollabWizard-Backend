@@ -9,21 +9,14 @@ const Skill = require('../../Models/Teacher/profile/teacherSkillModel');
 const Interest = require('../../Models/Teacher/profile/interestmodel');
 const Teacher = require('../../Models/Teacher/teacherModel');
 
-// const allTeachers = async(req,res)=>{
+const Teachers = async(req,res)=>{
 
-//     const [noteacher,teachers] = await to(teacher.query().returning("*"));
-//     //if(noUser) return badRequestError(res,"No user found");
-//     if(noteacher) return badRequestError(res,noteacher.message);
-//     console.log(teachers);
+    const [noteacher,teachers] = await to(Teacher.query().returning("*"));
+    if(noteacher) return badRequestError(res,"No teacher found");
     
-//     res.status(200).json({
-//         success: true,
-//         data : teachers,
-//         code : 200,
-//         message : "All Teachers"
-//         })
+    return okResponse(res,teachers,"Teachers");
     
-// }
+}
 
 const GetTeacherProfile = async (req, res) => {
 
@@ -312,7 +305,7 @@ const DeleteTeacherInterest = async (req, res) => {
 }
 
 module.exports = {
-    // allTeachers,
+    Teachers,
     GetTeacherProfile,
     UpdateTeacherProfile,
     AddTeacherEducation,

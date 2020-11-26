@@ -1,30 +1,42 @@
-// const { okResponse, badRequestError, to } = require("../../global_functions");
-// const Post = require("../../Models/Homepage/postModel");
-// const Like = require("../../Models/Homepage/likeModel");
-// const Comment = require("../../Models/Homepage/commentModel");
-// const Reply = require("../../Models/Homepage/replyModel");
-// const teacher = require("../../Models/Teacher/teacherModel");
+const { okResponse, badRequestError, to } = require("../../global_functions");
+const Post = require("../../Models/Homepage/postModel");
+const Like = require("../../Models/Homepage/likeModel");
+const Comment = require("../../Models/Homepage/commentModel");
+const Reply = require("../../Models/Homepage/replyModel");
+const teacher = require("../../Models/Teacher/teacherModel");
 
 // //Adding Post from Homepage
 
-// const AddPost = async (req, res) => {
-//   let { teacherID, postContent, isAnonymous } = req.body;
+const AddPost = async (req, res) => {
+    const data = req.body;
 
-//   const [unsaved, saved] = await to(
-//     Post.query()
-//       .insert({ teacherID, postContent ,isAnonymous })
-//       .returning("*")
-//       .withGraphFetched("teacher(Select)")
-//       .modifiers({
-//         Select(builder) {
-//           builder.select("username", "profileImageUrl","isAnonymous");
-//         },
-//       })
-//   );
-//   console.log(unsaved);
-//   if (unsaved) return badRequestError(res, "unable to save post");
-//   return okResponse(res, saved, "post saved successfully");
-// };
+    const modified = Object.assign({},{
+        ...data,
+        teacherId : req.user.id
+    })
+    console.log(modified);
+    const [unsaved, saved] = await to(
+        Post.query()
+        .insert(modified)
+        .returning("*")
+        .withGraphFetched("teacher")
+    );
+    console.log(unsaved);
+    if (unsaved) return badRequestError(res, "Unable to added post");
+    return okResponse(res, saved, "Post saved successfully");
+};
+
+const GetPosts = async (req, res) => {
+
+    const [unsaved, saved] = await to(
+        Post.query()
+        .returning("*")
+        .withGraphFetched("teacher")
+    );
+    console.log(unsaved);
+    if (unsaved) return badRequestError(res, "Unable to get post");
+    return okResponse(res, saved, "Post fetched successfully");
+};
 
 // //adds or removes LIKE on a post
 
@@ -208,8 +220,9 @@
 //   return okResponse(res, posts, "get succeed !!");
 // };
 
-// module.exports = {
-//   AddPost,
+module.exports = {
+  AddPost,
+  GetPosts
 //   AddComment,
 //   AddReply,
 //   UpVote,
@@ -217,4 +230,4 @@
 //   DeleteComment,
 //   DeletePost,
 //   GetPost,
-// };
+};
