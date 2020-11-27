@@ -9,6 +9,11 @@ const Skill = require('../../Models/Teacher/profile/teacherSkillModel');
 const Interest = require('../../Models/Teacher/profile/interestmodel');
 const Teacher = require('../../Models/Teacher/teacherModel');
 
+const GetIdByUsername = async (username) => {
+    const id = await Teacher.query().skipUndefined().where("username",username).first();
+    return id;
+}
+
 const Teachers = async(req,res)=>{
 
     const [noteacher,teachers] = await to(Teacher.query().returning("*"));
@@ -20,7 +25,7 @@ const Teachers = async(req,res)=>{
 
 const GetTeacherProfile = async (req, res) => {
 
-    const [noprofile, profile] = await to(Teacher.query().skipUndefined().where("id",req.user.id).withGraphFetched('[education,experience,skill,interest]').first().returning("*"));
+    const [noprofile, profile] = await to(Teacher.query().skipUndefined().where("id",req.user.id).withGraphFetched('[posts,education,experience,skill,interest]').first().returning("*"));
     if (noprofile) return badRequestError(res,noprofile);
 
     return okResponse(res,profile,"Profile");
@@ -67,7 +72,7 @@ const GetTeacherEducation = async(req,res) => {
 const GetTeacherEducations = async (req,res) => {
     console.log("Teacher Educations");
 
-    const [notfound,educations] = await to(Education.query().skipUndefined().returning("*"));
+    const [notfound,educations] = await to(Education.query().skipUndefined().where("teacherId",req.query.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher Education found");
 
     return okResponse(res,educations,"Teacher Educations");
@@ -124,7 +129,7 @@ const GetTeacherExperience = async(req,res) => {
     console.log("Teacher Experience Detail");
     const { teacherId } = req.user;
     const { id } = req.params;
-    console.log(id)
+    
     const [notfound,experienceDetails] = await to(Experience.query().skipUndefined().where("id",req.params.id).andWhere("teacherId",teacherId).first().throwIfNotFound().returning("*"));
     if(notfound) return badRequestError(res,"No experience found");
 
@@ -136,7 +141,7 @@ const GetTeacherExperience = async(req,res) => {
 const GetTeacherExperiences = async (req,res) => {
     console.log("Teacher Experiences");
 
-    const [notfound,experiences] = await to(Experience.query().skipUndefined().returning("*"));
+    const [notfound,experiences] = await to(Experience.query().skipUndefined().where("teacherId",req.user.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher experience found");
 
     return okResponse(res,experiences,"Teacher Experiences");
@@ -203,7 +208,7 @@ const GetTeacherSkill = async(req,res) => {
 const GetTeacherSkills = async (req,res) => {
     console.log("Teacher Skills");
 
-    const [notfound,skills] = await to(Skill.query().skipUndefined().returning("*"));
+    const [notfound,skills] = await to(Skill.query().skipUndefined().where("teacherId",req.user.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher skill found");
 
     return okResponse(res,skills,"Teacher Skills");
@@ -270,7 +275,7 @@ const GetTeacherInterest = async(req,res) => {
 const GetTeacherInterests = async (req,res) => {
     console.log("Teacher Interests");
 
-    const [notfound,interests] = await to(Interest.query().skipUndefined().returning("*"));
+    const [notfound,interests] = await to(Interest.query().skipUndefined().where("teacherId",req.user.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher interest found");
 
     return okResponse(res,interests,"Teacher Interests");

@@ -9,6 +9,7 @@ const {
 } = require("../../global_functions");
 const bcrypt = require("bcrypt");
 
+
 class Teacher extends Model {
 
   static get tableName() {
@@ -57,7 +58,17 @@ class Teacher extends Model {
     const Experience = require("./profile/teacherExpModel");
     const Skills = require("./profile/teacherSkillModel");
     const Interest = require("./profile/interestmodel");
+    const Post = require('../Homepage/postModel');
+    
     return {
+      posts: {
+        relation: Model.HasManyRelation,
+        modelClass: Post,
+        join: {
+          from: "teacher.id",
+          to: "post.teacherId"
+        }
+      },
       education: {
         relation: Model.HasManyRelation,
         modelClass: Education,
