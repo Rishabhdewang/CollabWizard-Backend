@@ -9,14 +9,9 @@ const Skill = require('../../Models/Teacher/profile/teacherSkillModel');
 const Interest = require('../../Models/Teacher/profile/interestmodel');
 const Teacher = require('../../Models/Teacher/teacherModel');
 
-const GetIdByUsername = async (username) => {
-    const id = await Teacher.query().skipUndefined().where("username",username).first();
-    return id;
-}
-
 const Teachers = async(req,res)=>{
 
-    const [noteacher,teachers] = await to(Teacher.query().returning("*"));
+    const [noteacher,teachers] = await to(Teacher.query().whereNot("id",req.user.id).withGraphFetched('[posts,education,experience,skill,interest]').returning("*"));
     if(noteacher) return badRequestError(res,"No teacher found");
     
     return okResponse(res,teachers,"Teachers");

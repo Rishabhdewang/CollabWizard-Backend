@@ -2,6 +2,7 @@ const router = require("express").Router();
 const auth = require("../../controllers/TeacherController/userAuthController");
 const profile = require("../../controllers/TeacherController/teacherProfileController");
 const HomepagePostController = require("../../controllers/HomepageController/HomepagePostController");
+const NetworkController = require("../../controllers/NetworkController/NetworkController");
 const { authenticateToken } = require('../../middlewares/authenticate');
 const fileUploader = require("../../middlewares/fileUploader");
 
@@ -14,7 +15,7 @@ router.post("/changePassword",auth.ChangePassword)
 router.post("/forgotPassword",auth.ForgotPassword)
 router.post("/verifyForgotPassword",auth.VerifyForgotPassword)
 
-router.get("/teachers",profile.Teachers)
+router.get("/teacher",authenticateToken,profile.Teachers)
 router.get("/profile",authenticateToken, profile.GetTeacherProfile)
 router.patch("/profile/:id",authenticateToken,profile.UpdateTeacherProfile)
 
@@ -49,6 +50,9 @@ router.post("/upload/files",fileUploader.UploadMultipleFiles);
 
 router.post("/post",authenticateToken,HomepagePostController.AddPost);
 router.get("/post",authenticateToken,HomepagePostController.GetPosts);
+
+router.post("/network",authenticateToken,NetworkController.AddNetwork);
+router.get("/network",authenticateToken,NetworkController.GetNetworks);
 // router.post("/addreply",authenticate,HomepagePostController.AddReply);
 // router.post("/upvote",authenticate,HomepagePostController.UpVote);
 // router.delete("/deletecomment",authenticate,HomepagePostController.DeleteComment);
