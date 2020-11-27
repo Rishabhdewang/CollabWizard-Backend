@@ -33,7 +33,6 @@ const GetTeacherProfile = async (req, res) => {
 
 const UpdateTeacherProfile = async (req, res) => {
 
-    console.log(req.body);
     const [notupdated, updated] = await to(Teacher.query().skipUndefined().where("id",req.user.id).patch(req.body).first().returning("*"));
     if (notupdated) return badRequestError(res,"Error in updating profile");
 
