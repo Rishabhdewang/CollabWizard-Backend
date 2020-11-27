@@ -16,7 +16,7 @@ router.post("/verifyForgotPassword",auth.VerifyForgotPassword)
 
 router.get("/teachers",profile.Teachers)
 router.get("/profile",authenticateToken, profile.GetTeacherProfile)
-// router.put("/updateprofile/:id",profile.updateTeacherProfile)
+router.patch("/profile/:id",authenticateToken,profile.UpdateTeacherProfile)
 
 router.post("/education", authenticateToken, profile.AddTeacherEducation)
 router.get("/education",authenticateToken, profile.GetTeacherEducations) 

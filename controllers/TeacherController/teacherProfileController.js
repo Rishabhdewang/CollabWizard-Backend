@@ -33,6 +33,7 @@ const GetTeacherProfile = async (req, res) => {
 
 const UpdateTeacherProfile = async (req, res) => {
 
+    console.log(req.body);
     const [notupdated, updated] = await to(Teacher.query().skipUndefined().where("id",req.user.id).patch(req.body).first().returning("*"));
     if (notupdated) return badRequestError(res,"Error in updating profile");
 
@@ -129,7 +130,7 @@ const GetTeacherExperience = async(req,res) => {
     console.log("Teacher Experience Detail");
     const { teacherId } = req.user;
     const { id } = req.params;
-    
+
     const [notfound,experienceDetails] = await to(Experience.query().skipUndefined().where("id",req.params.id).andWhere("teacherId",teacherId).first().throwIfNotFound().returning("*"));
     if(notfound) return badRequestError(res,"No experience found");
 
