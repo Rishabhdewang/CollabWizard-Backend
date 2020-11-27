@@ -208,7 +208,7 @@ const GetTeacherSkill = async(req,res) => {
 const GetTeacherSkills = async (req,res) => {
     console.log("Teacher Skills");
 
-    const [notfound,skills] = await to(Skill.query().skipUndefined().where("teacherId",req.user.teacherId).returning("*"));
+    const [notfound,skills] = await to(Skill.query().skipUndefined().where("teacherId",req.query.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher skill found");
 
     return okResponse(res,skills,"Teacher Skills");
@@ -275,7 +275,7 @@ const GetTeacherInterest = async(req,res) => {
 const GetTeacherInterests = async (req,res) => {
     console.log("Teacher Interests");
 
-    const [notfound,interests] = await to(Interest.query().skipUndefined().where("teacherId",req.user.teacherId).returning("*"));
+    const [notfound,interests] = await to(Interest.query().skipUndefined().where("teacherId",req.query.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher interest found");
 
     return okResponse(res,interests,"Teacher Interests");
