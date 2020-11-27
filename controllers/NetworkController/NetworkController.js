@@ -16,6 +16,7 @@ const AddNetwork = async (req,res) => {
     if(error) return badRequestError(res,error);
 
     const networks = await Teacher.query().skipUndefined().where("id",network).withGraphFetched('[posts,education,experience,skill,interest]').returning("*");
+    
     return okResponse(res,networks,"Network added");
 }
 
