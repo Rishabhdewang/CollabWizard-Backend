@@ -141,7 +141,7 @@ const GetTeacherExperience = async(req,res) => {
 const GetTeacherExperiences = async (req,res) => {
     console.log("Teacher Experiences");
 
-    const [notfound,experiences] = await to(Experience.query().skipUndefined().where("teacherId",req.user.teacherId).returning("*"));
+    const [notfound,experiences] = await to(Experience.query().skipUndefined().where("teacherId",req.query.teacherId).returning("*"));
     if(notfound) return badRequestError(res,"No Teacher experience found");
 
     return okResponse(res,experiences,"Teacher Experiences");
