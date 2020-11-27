@@ -15,14 +15,15 @@ const AddNetwork = async (req,res) => {
     const [error,network] = await to(Network.query().skipUndefined().insert(modified).first().returning("*"));
     if(error) return badRequestError(res,error);
 
-    return okResponse(res,network,"Network added");
+    const networks = await Teacher.query().skipUndefined().where("id",network).withGraphFetched('[posts,education,experience,skill,interest]').returning("*");
+    return okResponse(res,networks,"Network added");
 }
 
 const GetNetworks = async (req,res) => {
     console.log("Get Networks");
 
     const [error, network] = await to(Network.query().skipUndefined().select("networkId").where("teacherId",req.query.teacherId).returning("*"));
-    
+
     if(error) return badRequestError(res,error);
 
     const Ids = [];
