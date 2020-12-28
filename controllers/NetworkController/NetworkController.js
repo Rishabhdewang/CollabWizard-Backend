@@ -36,7 +36,7 @@ const GetNetworks = async (req,res) => {
 
 
     return okResponse(res,networks,"Networks");
-
+// here are the networks
 }
 
 module.exports = {
